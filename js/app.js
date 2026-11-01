@@ -8,6 +8,7 @@
   const modal = document.getElementById('movieModal');
   const closeBtn = document.getElementById('movieModalClose');
   const telegramMain = document.getElementById('telegramMain');
+  const socialTelegram = document.getElementById('socialTelegram');
 
   let movies = [];
   let activeFilter = 'all';
@@ -173,6 +174,7 @@
   function applySettings(settings) {
     if (!settings) return;
     if (telegramMain && settings.telegram_url) telegramMain.href = settings.telegram_url;
+    if (socialTelegram && settings.telegram_url) socialTelegram.href = settings.telegram_url;
     const hot = document.querySelector('.dv-hot');
     const title = document.querySelector('.dv-hero h1');
     const description = document.querySelector('.dv-hero p');
@@ -209,8 +211,13 @@
     const notice = document.getElementById('catalogNotice');
     notice.hidden = false;
     notice.textContent = 'ទិន្នន័យគំរូ · មិនទាន់ភ្ជាប់បញ្ជីរឿងផ្ទាល់។ ការទូទាត់ត្រូវបានបិទសម្រាប់ទិន្នន័យនេះ។';
-    if (telegramMain && data.settings?.telegramUrl && data.settings.telegramUrl !== 'https://t.me/') telegramMain.href = data.settings.telegramUrl;
-    else if (telegramMain) telegramMain.hidden = true;
+    if (data.settings?.telegramUrl && data.settings.telegramUrl !== 'https://t.me/') {
+      if (telegramMain) telegramMain.href = data.settings.telegramUrl;
+      if (socialTelegram) socialTelegram.href = data.settings.telegramUrl;
+    } else {
+      if (telegramMain) telegramMain.hidden = true;
+      if (socialTelegram) socialTelegram.hidden = true;
+    }
   }
 
   async function loadData() {

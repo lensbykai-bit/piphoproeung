@@ -142,3 +142,30 @@ body,button,input,.dv-cat,.nav-link,.movie-title,.movie-modal-title,.movie-modal
   .movie-modal-actions{grid-template-columns:1fr}
   .movie-modal-btn{min-block-size:50px}
 }
+
+
+/* Checkout accessibility and compact-device refinements */
+.movie-modal-box{overscroll-behavior:contain;scrollbar-gutter:stable}
+.movie-modal-content,.movie-price-card,.movie-modal-actions{min-inline-size:0}
+.movie-modal-title,.movie-modal-desc,.movie-price-note{overflow-wrap:anywhere}
+.movie-modal-btn{white-space:normal;line-height:1.6}
+.movie-modal-close{display:grid;place-items:center;flex-shrink:0}
+@media(max-width:380px){
+  .movie-modal-box{padding-inline:14px}
+  .movie-modal-title{font-size:21px}
+  .movie-price-card{padding:13px 14px}
+  .movie-modal-actions{gap:9px}
+  .movie-modal-btn{padding:12px}
+}
+@media(max-height:560px) and (orientation:landscape){
+  .movie-modal{align-items:center;padding:10px}
+  .movie-modal-box{
+    max-block-size:calc(100dvh - 20px);
+    border-radius:18px;
+    padding:16px;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .movie-modal-btn{transition:none}
+  .movie-modal-btn:hover{transform:none}
+}

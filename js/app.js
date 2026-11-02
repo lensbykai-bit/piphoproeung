@@ -28,14 +28,15 @@
     const message = String(error?.message || '').trim();
     const details = String(error?.details || '').trim();
     const hint = String(error?.hint || '').trim();
-    const lower = [message, details, hint].join(' ').toLowerCase();
+    const rpcMessage = String(error?.rpcError?.message || '').trim();
+    const lower = [message, details, hint, rpcMessage].join(' ').toLowerCase();
 
     if (
       code === 'PGRST202' ||
       lower.includes('could not find the function') ||
       lower.includes('create_checkout_order')
     ) {
-      return `Checkout backend មិនទាន់បានដំឡើងក្នុង Supabase${code ? ` (${code})` : ''}។`;
+      return `Checkout backend មិនទាន់មាន RPC/Edge Function ដែលអាចបង្កើត Order បាន${code ? ` (${code})` : ''}។`;
     }
 
     if (
@@ -57,6 +58,79 @@
 
     const readable = message || details || 'Unknown checkout error';
     return `Checkout error${code ? ` (${code})` : ''}: ${readable}`;
+  }
+
+  function isMissingRpcError(error) {
+    const code = String(error?.code || '').trim();
+    const text = [error?.message, error?.details, error?.hint].filter(Boolean).join(' ').toLowerCase();
+    return code === 'PGRST202' || code === '42883' ||
+      text.includes('could not find the function') ||
+      text.includes('function public.create_checkout_order') ||
+      text.includes('create_checkout_order');
+  }
+
+  function isPermissionError(error) {
+    const code = String(error?.code || '').trim();
+    const text = [error?.message, error?.details, error?.hint].filter(Boolean).join(' ').toLowerCase();
+    return code === '42501' ||
+      text.includes('permission denied') ||
+      text.includes('row-level security') ||
+      text.includes('rls');
+  }
+
+  function normalizeOrderPayload(data) {
+    const order = Array.isArray(data) ? data[0] : data;
+    if (!order?.order_id || !order?.access_token) return null;
+    return order;
+  }
+
+  async function createCheckoutOrder(movie) {
+    // Current contract used by this storefront.
+    let result = await db.rpc('create_checkout_order', {
+      p_movie_id: movie.id,
+      p_customer_contact: null
+    });
+
+    if (!result.error) {
+      const order = normalizeOrderPayload(result.data);
+      if (order) return order;
+      throw new Error('Checkout backend returned an invalid Order response.');
+    }
+
+    let lastError = result.error;
+
+    // Some older deployments expose create_checkout_order(p_movie_id) only.
+    if (isMissingRpcError(lastError)) {
+      result = await db.rpc('create_checkout_order', {
+        p_movie_id: movie.id
+      });
+
+      if (!result.error) {
+        const order = normalizeOrderPayload(result.data);
+        if (order) return order;
+        throw new Error('Checkout backend returned an invalid Order response.');
+      }
+      lastError = result.error;
+    }
+
+    // Historical deployment created orders through the secure Edge Function.
+    // Only fall back when the RPC is missing or blocked before creating an order.
+    if (isMissingRpcError(lastError) || isPermissionError(lastError)) {
+      const edge = await db.functions.invoke('bakong-order', {
+        body: { action: 'create', movieId: movie.id }
+      });
+
+      if (!edge.error && !edge.data?.error) {
+        const order = normalizeOrderPayload(edge.data);
+        if (order) return order;
+      }
+
+      const edgeError = edge.error || new Error(edge.data?.error || 'Bakong Edge Function could not create an Order.');
+      edgeError.rpcError = lastError;
+      throw edgeError;
+    }
+
+    throw lastError;
   }
 
   function normalizeCategory(movie) {
@@ -165,15 +239,7 @@
       watchBtn.disabled = true;
       watchBtn.textContent = 'កំពុងបង្កើត Order...';
       try {
-        const { data, error } = await db.rpc('create_checkout_order', {
-          p_movie_id: movie.id,
-          p_customer_contact: null
-        });
-        if (error) throw error;
-        const order = Array.isArray(data) ? data[0] : data;
-        if (!order?.order_id || !order?.access_token) {
-          throw new Error('មិនអាចបង្កើត Order បានទេ។');
-        }
+        const order = await createCheckoutOrder(movie);
         location.href = `pay.html#${order.order_id}:${order.access_token}`;
       } catch (error) {
         console.error('Checkout create order failed:', {

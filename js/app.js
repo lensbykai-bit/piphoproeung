@@ -23,6 +23,42 @@
       .replaceAll("'", '&#039;');
   }
 
+  function checkoutErrorMessage(error) {
+    const code = String(error?.code || '').trim();
+    const message = String(error?.message || '').trim();
+    const details = String(error?.details || '').trim();
+    const hint = String(error?.hint || '').trim();
+    const lower = [message, details, hint].join(' ').toLowerCase();
+
+    if (
+      code === 'PGRST202' ||
+      lower.includes('could not find the function') ||
+      lower.includes('create_checkout_order')
+    ) {
+      return `Checkout backend មិនទាន់បានដំឡើងក្នុង Supabase${code ? ` (${code})` : ''}។`;
+    }
+
+    if (
+      code === '42501' ||
+      lower.includes('permission denied') ||
+      lower.includes('row-level security') ||
+      lower.includes('rls')
+    ) {
+      return `Supabase មិនអនុញ្ញាតឱ្យបង្កើត Order${code ? ` (${code})` : ''}។ សូមពិនិត្យ RPC permission/RLS។`;
+    }
+
+    if (
+      lower.includes('failed to fetch') ||
+      lower.includes('network') ||
+      lower.includes('load failed')
+    ) {
+      return 'មិនអាចភ្ជាប់ទៅ Supabase បានទេ។ សូមពិនិត្យ Internet និង Supabase project។';
+    }
+
+    const readable = message || details || 'Unknown checkout error';
+    return `Checkout error${code ? ` (${code})` : ''}: ${readable}`;
+  }
+
   function normalizeCategory(movie) {
     return (movie.category || []).map(v => String(v).toLowerCase());
   }
@@ -140,8 +176,19 @@
         }
         location.href = `pay.html#${order.order_id}:${order.access_token}`;
       } catch (error) {
-        console.error(error);
-        document.getElementById('checkoutMessage').textContent = 'មិនអាចចាប់ផ្ដើមការទូទាត់បានទេ។ សូមសាកម្ដងទៀត។';
+        console.error('Checkout create order failed:', {
+          code: error?.code,
+          message: error?.message,
+          details: error?.details,
+          hint: error?.hint,
+          error
+        });
+        const checkoutMessage = document.getElementById('checkoutMessage');
+        if (checkoutMessage) {
+          checkoutMessage.textContent = checkoutErrorMessage(error);
+          checkoutMessage.dataset.errorCode = String(error?.code || '');
+          checkoutMessage.title = [error?.details, error?.hint].filter(Boolean).join(' · ');
+        }
         watchBtn.disabled = false;
         watchBtn.textContent = original;
       }

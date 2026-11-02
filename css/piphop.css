@@ -486,3 +486,19 @@ a.social-link:hover .social-arrow{
   .movie-modal-actions{grid-template-columns:1fr}
   .movie-modal-btn{min-block-size:46px}
 }
+
+
+/* Checkout diagnostics and modal focus cleanup */
+.movie-modal-box:focus,
+.movie-modal-box:focus-visible{
+  outline:none;
+}
+.checkout-message[data-error-code]{
+  user-select:text;
+  overflow-wrap:anywhere;
+}
+.checkout-message[data-error-code="PGRST202"],
+.checkout-message[data-error-code="42501"]{
+  border-color:rgba(255,145,125,.24);
+  background:rgba(255,145,125,.07);
+}

@@ -247,15 +247,15 @@ import {
 
   async function loadOrder(silent = false) {
     try {
-      const { data, error } = await db.rpc('get_checkout_order', {
-        p_order_id: orderId,
-        p_access_token: token
+      const { data, error } = await db.functions.invoke('bakong-order', {
+        body: { action: 'details', orderId, accessToken: token }
       });
 
       if (error) throw error;
+      if (data?.error) throw new Error(data.error);
 
-      const order = Array.isArray(data) ? data[0] : data;
-      if (!order) throw new Error('រកមិនឃើញ Order នេះទេ។');
+      const order = data;
+      if (!order?.order_id) throw new Error('រកមិនឃើញ Order នេះទេ។');
 
       currentOrder = order;
       $('checkout').hidden = false;
@@ -272,7 +272,14 @@ import {
       if (order.status === 'pending') startCountdown(order.expires_at);
 
       if (order.status === 'pending') {
-        await renderAutoKhqr();
+        if (order.khqr_payload) {
+          const box = $('qrBox');
+          box.innerHTML = '<canvas id="dynamicKhqr" aria-label="KHQR សម្រាប់ការបញ្ជាទិញនេះ" style="max-width:100%;height:auto;border-radius:12px"></canvas>';
+          await QRCode.toCanvas($('dynamicKhqr'), order.khqr_payload, { width: 280, margin: 2, errorCorrectionLevel: 'M' });
+          khqrKey = [order.order_id, order.order_code, order.amount_khr, 'stored'].join('|');
+        } else {
+          await renderAutoKhqr();
+        }
       } else {
         clearInterval(poller);
       }
@@ -294,7 +301,7 @@ import {
   if (!db) return fail('Supabase មិនទាន់ភ្ជាប់។');
   if (!parseHash()) return fail('Payment link មិនត្រឹមត្រូវ។');
 
-  Promise.all([loadSettings(), loadOrder(false)]).then(renderAutoKhqr);
+  Promise.all([loadSettings(), loadOrder(false)]);
 
   poller = setInterval(() => {
     if (currentOrder?.status === 'pending') checkBakongStatus(true);

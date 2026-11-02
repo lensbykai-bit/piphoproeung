@@ -199,6 +199,267 @@
       .qr-box{border-radius:15px}
     }
 
+
+    /* Compact PiPhop Pay polish */
+    .wrap{
+      max-width:1080px;
+      padding-top:18px;
+    }
+    .top{
+      margin-bottom:18px;
+      padding-bottom:12px;
+    }
+    .back{
+      padding:8px 12px;
+      border-radius:999px;
+      font-size:12px;
+    }
+    .shell{
+      grid-template-columns:minmax(0,1fr) minmax(280px,330px);
+      gap:16px;
+    }
+    .card{
+      border-radius:18px;
+      box-shadow:0 18px 50px rgba(0,0,0,.24);
+    }
+    .main{
+      padding:20px;
+    }
+    .side{
+      padding:14px;
+      position:sticky;
+      top:16px;
+    }
+    .pay-logo{
+      padding:6px 10px 6px 7px;
+      gap:8px;
+      font-size:11px;
+    }
+    .pay-logo i{
+      width:26px;
+      height:26px;
+      border-radius:50%;
+      font-size:10px;
+    }
+    .movie{
+      grid-template-columns:78px minmax(0,1fr);
+      gap:14px;
+      margin:16px 0;
+      padding-bottom:16px;
+    }
+    .poster{
+      width:78px;
+      border-radius:12px;
+      box-shadow:0 10px 24px rgba(0,0,0,.20);
+    }
+    .movie h1{
+      font-size:clamp(18px,2vw,22px);
+      margin:2px 0 7px;
+      line-height:1.55;
+    }
+    .muted,
+    .amount-label{
+      font-size:11px;
+    }
+    .status{
+      padding:5px 9px;
+      font-size:10px;
+    }
+    .amount{
+      font-size:clamp(30px,3.5vw,38px);
+      margin:2px 0;
+      line-height:1.15;
+    }
+    .order-info{
+      gap:9px;
+      margin-top:14px;
+    }
+    .info{
+      padding:10px 11px;
+      border-radius:11px;
+    }
+    .info small{
+      font-size:9px;
+      margin-bottom:3px;
+    }
+    .info strong{
+      font-size:11px;
+    }
+    .copy{
+      font-size:10px;
+      margin-left:4px;
+    }
+    .actions{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      margin-top:14px;
+      flex-wrap:wrap;
+    }
+    .btn{
+      min-height:36px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      flex:0 0 auto;
+      padding:7px 13px;
+      border-radius:999px;
+      font-size:11px;
+      line-height:1.45;
+      box-shadow:none;
+    }
+    .primary{
+      flex:0 0 auto;
+      min-width:0;
+      background:linear-gradient(110deg,#ff765c,#f4477e);
+      box-shadow:0 8px 20px rgba(244,71,126,.12);
+    }
+    .watch{
+      flex:0 0 auto;
+      min-width:0;
+      padding-inline:15px;
+    }
+    .watch.show{
+      display:inline-flex;
+    }
+    .notice{
+      margin-top:13px;
+      padding-top:12px;
+      font-size:10px;
+      line-height:1.75;
+    }
+
+    .qr-box{
+      width:100%;
+      max-width:286px;
+      aspect-ratio:1/1;
+      min-height:0;
+      margin:0 auto;
+      padding:14px;
+      border:1px solid rgba(255,255,255,.09);
+      border-radius:18px;
+      background:
+        radial-gradient(circle at 50% 35%,rgba(255,128,86,.055),transparent 42%),
+        #0d1018;
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.018),
+        0 14px 36px rgba(0,0,0,.18);
+    }
+    .qr-box canvas,
+    .qr-box img{
+      display:block;
+      width:min(100%,246px)!important;
+      height:auto!important;
+      max-width:246px!important;
+      aspect-ratio:1/1;
+      margin:auto;
+      padding:10px;
+      border-radius:16px!important;
+      background:#fff;
+      box-shadow:0 10px 30px rgba(0,0,0,.28);
+    }
+    .provider{
+      margin:12px 0 2px;
+      font-size:13px;
+    }
+    .account{
+      font-size:10px;
+      line-height:1.55;
+    }
+    .instruction{
+      margin-top:11px;
+      padding:10px 11px;
+      border-radius:11px;
+      font-size:10px;
+      line-height:1.75;
+      text-align:center;
+      background:rgba(255,255,255,.025);
+    }
+
+    @media(max-width:780px){
+      .shell{
+        grid-template-columns:1fr;
+        max-width:620px;
+        margin-inline:auto;
+      }
+      .side{
+        order:-1;
+        position:static;
+        max-width:none;
+        width:100%;
+      }
+      .qr-box{
+        max-width:280px;
+      }
+      .actions{
+        justify-content:flex-start;
+      }
+    }
+
+    @media(max-width:520px){
+      .wrap{
+        padding:10px 9px 30px;
+      }
+      .top{
+        align-items:center;
+      }
+      .brand{
+        font-size:20px;
+      }
+      .back{
+        padding:7px 10px;
+        font-size:11px;
+      }
+      .main,
+      .side{
+        padding:13px;
+      }
+      .card{
+        border-radius:15px;
+      }
+      .movie{
+        grid-template-columns:64px minmax(0,1fr);
+        gap:11px;
+        margin:13px 0;
+        padding-bottom:13px;
+      }
+      .poster{
+        width:64px;
+      }
+      .movie h1{
+        font-size:18px;
+      }
+      .amount{
+        font-size:30px;
+      }
+      .order-info{
+        grid-template-columns:1fr;
+        gap:7px;
+      }
+      .actions{
+        gap:7px;
+      }
+      .btn{
+        min-height:34px;
+        padding:7px 11px;
+        font-size:10px;
+      }
+      .watch{
+        max-width:100%;
+      }
+      .qr-box{
+        max-width:260px;
+        padding:12px;
+      }
+      .qr-box canvas,
+      .qr-box img{
+        width:min(100%,224px)!important;
+        max-width:224px!important;
+        padding:8px;
+        border-radius:13px!important;
+      }
+    }
+
     [hidden]{display:none!important} body{font-family:"Kantumruy Pro",Inter,sans-serif} .brand{text-decoration:none;color:inherit} .watch{font-family:"Kantumruy Pro",sans-serif}
   </style>
 </head>

@@ -931,3 +931,215 @@ a.social-link:hover .social-arrow{
     font-size:27px;
   }
 }
+
+
+/* KHQR popup visual polish v2 */
+.payment-step-modal{
+  padding:16px;
+  background:rgba(3,5,10,.92);
+  backdrop-filter:blur(20px);
+}
+.payment-step-box{
+  width:min(92vw,640px);
+  max-height:min(90dvh,560px);
+  padding:18px;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.085);
+  background:
+    radial-gradient(circle at 100% 0,rgba(246,67,128,.075),transparent 30%),
+    linear-gradient(150deg,#171821 0%,#12131b 100%);
+  box-shadow:0 28px 80px rgba(0,0,0,.58);
+}
+.payment-step-close{
+  top:9px;
+  right:9px;
+  width:30px;
+  height:30px;
+  font-size:12px;
+  background:#1a202c;
+  border-color:rgba(255,255,255,.08);
+  box-shadow:none;
+}
+.payment-step-close:focus-visible{
+  outline:2px solid rgba(255,143,124,.55);
+  outline-offset:2px;
+}
+.payment-step-head{
+  margin-bottom:12px;
+  padding-right:38px;
+}
+.payment-step-head>span{
+  padding:4px 8px;
+  font-size:8px;
+  letter-spacing:1.2px;
+  background:rgba(246,67,128,.105);
+  color:#ff91a4;
+}
+.payment-step-head h2{
+  margin:7px 0 1px;
+  font-size:21px;
+  line-height:1.5;
+}
+.payment-step-head p{
+  font-size:10px;
+  color:#888697;
+}
+.payment-step-grid{
+  grid-template-columns:220px minmax(0,1fr);
+  gap:16px;
+}
+.payment-qr-panel{
+  padding:10px;
+  border-radius:15px;
+  background:rgba(255,255,255,.018);
+  border:1px solid rgba(255,255,255,.07);
+}
+.payment-qr-frame{
+  width:100%;
+  aspect-ratio:1/1;
+  padding:9px;
+  border-radius:14px;
+  background:#fff;
+  box-shadow:
+    0 14px 30px rgba(0,0,0,.28),
+    0 0 0 1px rgba(255,255,255,.05);
+  overflow:hidden;
+}
+.payment-qr-frame canvas{
+  width:100%!important;
+  max-width:202px!important;
+  height:auto!important;
+}
+.payment-qr-empty{
+  max-width:150px;
+  color:#6f7078;
+  font-family:'Kantumruy Pro',Inter,sans-serif;
+  font-size:10px;
+  line-height:1.7;
+}
+.payment-provider{
+  margin-top:8px;
+}
+.payment-provider strong{
+  font-size:12px;
+}
+.payment-provider small{
+  margin-top:1px;
+  font-size:8px;
+}
+.payment-summary{
+  display:flex;
+  flex-direction:column;
+  min-width:0;
+}
+.payment-amount-card{
+  display:flex;
+  align-items:end;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:8px;
+  padding:11px 12px;
+  border-radius:12px;
+  background:rgba(255,255,255,.02);
+  border-color:rgba(255,255,255,.07);
+}
+.payment-amount-card span{
+  font-size:8px;
+  line-height:1.6;
+}
+.payment-amount-card strong{
+  margin:0;
+  font-size:28px;
+  color:#ff8f7c;
+  white-space:nowrap;
+}
+.payment-detail-row{
+  min-height:35px;
+  padding:7px 1px;
+  gap:10px;
+}
+.payment-detail-row span{
+  font-size:8px;
+  color:#838191;
+}
+.payment-detail-row strong{
+  font-size:9px;
+  color:#e8e7ed;
+}
+.payment-status{
+  padding:4px 7px;
+  font-size:8px!important;
+  font-weight:700;
+}
+.payment-status-message{
+  min-height:0;
+  margin:9px 0 0;
+  padding:9px 10px;
+  border-radius:10px;
+  background:rgba(255,255,255,.018);
+  border:1px solid rgba(255,255,255,.055);
+  color:#9b99a8;
+  font-size:9px;
+  line-height:1.7;
+}
+.payment-step-actions{
+  gap:7px;
+  margin-top:9px;
+}
+.payment-small-btn{
+  min-height:32px;
+  padding:6px 11px;
+  border-radius:999px;
+  font-size:9px;
+  background:#172331;
+  border-color:rgba(255,255,255,.07);
+  transition:transform .16s ease,background .16s ease,border-color .16s ease;
+}
+.payment-small-btn:hover{
+  transform:translateY(-1px);
+  background:#1d2b3b;
+  border-color:rgba(255,255,255,.12);
+}
+.payment-small-btn.success{
+  background:linear-gradient(110deg,#4ed29e,#2fc18a);
+  box-shadow:0 8px 18px rgba(47,193,138,.12);
+}
+
+@media(max-width:650px){
+  .payment-step-box{
+    max-height:90dvh;
+    padding:16px 13px calc(14px + env(safe-area-inset-bottom));
+  }
+  .payment-step-grid{
+    grid-template-columns:1fr;
+    gap:11px;
+  }
+  .payment-qr-panel{
+    width:min(100%,238px);
+    padding:9px;
+  }
+  .payment-qr-frame{
+    padding:8px;
+  }
+  .payment-qr-frame canvas{
+    max-width:202px!important;
+  }
+  .payment-step-head{
+    margin-bottom:10px;
+  }
+  .payment-step-head h2{
+    font-size:20px;
+  }
+  .payment-amount-card{
+    padding:10px 11px;
+  }
+  .payment-amount-card strong{
+    font-size:25px;
+  }
+  .payment-detail-row{
+    min-height:33px;
+  }
+  .payment-status-message{
+    margin-top:7px;
+  }
+}

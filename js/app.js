@@ -90,52 +90,16 @@
   }
 
   async function createCheckoutOrder(movie) {
-    // Current contract used by this storefront.
-    let result = await db.rpc('create_checkout_order', {
-      p_movie_id: movie.id,
-      p_customer_contact: null
+    const { data, error } = await db.functions.invoke('bakong-order', {
+      body: { action: 'create', movieId: movie.id }
     });
 
-    if (!result.error) {
-      const order = normalizeOrderPayload(result.data);
-      if (order) return order;
-      throw new Error('Checkout backend returned an invalid Order response.');
-    }
+    if (error) throw error;
+    if (data?.error) throw new Error(data.error);
 
-    let lastError = result.error;
-
-    // Some older deployments expose create_checkout_order(p_movie_id) only.
-    if (isMissingRpcError(lastError)) {
-      result = await db.rpc('create_checkout_order', {
-        p_movie_id: movie.id
-      });
-
-      if (!result.error) {
-        const order = normalizeOrderPayload(result.data);
-        if (order) return order;
-        throw new Error('Checkout backend returned an invalid Order response.');
-      }
-      lastError = result.error;
-    }
-
-    // Historical deployment created orders through the secure Edge Function.
-    // Only fall back when the RPC is missing or blocked before creating an order.
-    if (isMissingRpcError(lastError) || isPermissionError(lastError)) {
-      const edge = await db.functions.invoke('bakong-order', {
-        body: { action: 'create', movieId: movie.id }
-      });
-
-      if (!edge.error && !edge.data?.error) {
-        const order = normalizeOrderPayload(edge.data);
-        if (order) return order;
-      }
-
-      const edgeError = edge.error || new Error(edge.data?.error || 'Bakong Edge Function could not create an Order.');
-      edgeError.rpcError = lastError;
-      throw edgeError;
-    }
-
-    throw lastError;
+    const order = normalizeOrderPayload(data);
+    if (!order) throw new Error('មិនអាចបង្កើត Order + KHQR បានទេ។');
+    return order;
   }
 
   function khrMoney(value) {

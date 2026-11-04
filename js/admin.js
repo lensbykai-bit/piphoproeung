@@ -292,32 +292,12 @@
         </div>
         <div class="order-actions">
           <span class="pill ${escapeHtml(order.status)}">${escapeHtml(order.status)}</span>
-          ${order.status === 'pending' ? '<button class="small-btn mark-paid" type="button">Mark Paid</button>' : ''}
+          
         </div>
       </article>
     `).join('');
 
-    ordersList.querySelectorAll('.mark-paid').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const orderId = btn.closest('[data-order-id]').dataset.orderId;
-        const ref = prompt('Payment reference (optional):', '') ?? '';
-        if (!confirm('បានពិនិត្យថាប្រាក់ចូលពិតប្រាកដហើយមែនទេ?')) return;
-
-        btn.disabled = true;
-        const { error: paidError } = await db.rpc('admin_mark_order_paid', {
-          p_order_id: orderId,
-          p_reference: ref
-        });
-
-        if (paidError) {
-          btn.disabled = false;
-          return showStatus(paidError.message, 'error');
-        }
-
-        showStatus('Order ត្រូវបានកំណត់ជា Paid រួចហើយ។', 'success');
-        await loadOrders();
-      });
-    });
+    // Payment state is read-only here. Only the trusted payment backend may verify and settle orders.
   }
 
   function resetMovieForm() {

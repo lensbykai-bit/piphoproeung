@@ -403,10 +403,11 @@
     }
 
     const watchBtn = document.getElementById('modalWatch');
-    watchBtn.disabled = fallbackMode || !db;
-    watchBtn.textContent = fallbackMode ? 'ទិន្នន័យគំរូ · មិនអាចទិញបាន' : 'ទិញរឿងតាម KHQR';
+    const checkoutEnabled = window.DRAMAVERSE_SUPABASE?.checkoutEnabled === true;
+    watchBtn.disabled = fallbackMode || !db || !checkoutEnabled;
+    watchBtn.textContent = fallbackMode ? 'ទិន្នន័យគំរូ · មិនអាចទិញបាន' : !checkoutEnabled ? 'ការទូទាត់កំពុងរៀបចំ' : 'ទិញរឿងតាម KHQR';
     watchBtn.onclick = async () => {
-      if (!db || fallbackMode) return;
+      if (!db || fallbackMode || !checkoutEnabled) return;
       const original = watchBtn.textContent;
       watchBtn.disabled = true;
       watchBtn.textContent = 'កំពុងបង្កើត Order...';
